@@ -28,8 +28,7 @@ public class UserService {
         this.jwtUtil = jwtUtil;
         this.mapper = mapper;
     }
-
-    // ---------------- createUser ----------------
+    
     public UserResponse createUser(UserRequest req) {
         // Validaciones
         if (!req.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
@@ -70,8 +69,7 @@ public class UserService {
 
         return mapper.map(savedUser, UserResponse.class);
     }
-
-    // ---------------- login ----------------
+    
     public UserResponse login(String token) {
         String email = jwtUtil.extractEmail(token);
         User user = repository.findByEmail(email)
@@ -98,8 +96,7 @@ public class UserService {
 
         return response;
     }
-
-    // ---------------- findByEmail ----------------
+    
     public java.util.Optional<User> findByEmail(String email) {
         return repository.findByEmail(email);
     }

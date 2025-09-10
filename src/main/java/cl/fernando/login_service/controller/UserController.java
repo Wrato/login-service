@@ -29,8 +29,6 @@ public class UserController {
 	@PostMapping("/login")
 	public ResponseEntity<UserResponse> login(@RequestHeader("Authorization") String token) {
 		String jwt = token.replace("Bearer ", "");
-		
-		UserResponse response = userService.login(jwt);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(userService.login(jwt));
 	}
 }

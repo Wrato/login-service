@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +24,6 @@ import org.modelmapper.ModelMapper;
 import cl.fernando.login_service.dto.PhoneRequest;
 import cl.fernando.login_service.dto.UserRequest;
 import cl.fernando.login_service.dto.UserResponse;
-import cl.fernando.login_service.entity.Phone;
 import cl.fernando.login_service.entity.User;
 import cl.fernando.login_service.repository.UserRepository;
 import cl.fernando.login_service.service.UserService;
@@ -70,14 +68,11 @@ public class UserServiceTest {
         userEntity.setToken("fake-jwt-token");
     }
 
-    // ---------------- createUser tests ----------------
-
     @Test
     void testCreateUser_success() {
         when(userRepository.findByEmail(validRequest.getEmail())).thenReturn(Optional.empty());
         when(jwtUtil.generateToken(validRequest.getEmail())).thenReturn("fake-jwt-token");
 
-        // Devuelve el mismo objeto para simular persistencia
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         UserResponse response = userService.createUser(validRequest);
@@ -129,8 +124,6 @@ public class UserServiceTest {
         assertEquals("Usuario ya existe", ex.getMessage());
     }
 
-    // ---------------- login tests ----------------
-
     @Test
     void testLogin_success() {
         when(jwtUtil.extractEmail(anyString())).thenReturn(validRequest.getEmail());
@@ -163,8 +156,6 @@ public class UserServiceTest {
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.login("token"));
         assertEquals("Token inválido o expirado", ex.getMessage());
     }
-
-    // ---------------- findByEmail tests ----------------
 
     @Test
     void testFindByEmail_found() {

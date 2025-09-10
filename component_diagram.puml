@@ -1,0 +1,12 @@
+@startuml
+package "Login Service" {
+    [UserService] --> [UserRepository]
+    [UserService] --> [JwtUtil]
+    [UserService] --> [ModelMapper]
+
+    [UserController] --> [UserService]
+}
+
+[Database H2] <-- [UserRepository]
+
+@enduml

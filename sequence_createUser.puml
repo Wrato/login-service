@@ -1,0 +1,18 @@
+@startuml
+actor Cliente
+participant "UserController" as UC
+participant "UserService" as US
+participant "UserRepository" as UR
+participant "JwtUtil" as JWT
+
+Cliente -> UC : POST /users
+UC -> US : createUser(UserRequest)
+US -> US : validar email y password
+US -> UR : findByEmail(email)
+UR --> US : Optional.empty
+US -> JWT : generateToken(email)
+US -> UR : save(User)
+UR --> US : User guardado
+US --> UC : UserResponse
+UC --> Cliente : 201 Created + UserResponse
+@enduml
