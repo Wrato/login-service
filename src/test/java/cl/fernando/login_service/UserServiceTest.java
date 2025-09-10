@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,8 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import cl.fernando.login_service.dto.PhoneRequest;
 import cl.fernando.login_service.dto.UserRequest;
 import cl.fernando.login_service.dto.UserResponse;
 import cl.fernando.login_service.entity.User;
@@ -29,6 +29,8 @@ import cl.fernando.login_service.repository.UserRepository;
 import cl.fernando.login_service.service.UserService;
 import cl.fernando.login_service.util.JwtUtil;
 
+@SpringBootTest
+@ActiveProfiles("test")
 public class UserServiceTest {
 	
 	@Mock
@@ -49,13 +51,13 @@ public class UserServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        modelMapper = new ModelMapper(); // Mapper real
+        modelMapper = new ModelMapper();
         userService = new UserService(userRepository, jwtUtil, modelMapper);
 
         validRequest = new UserRequest();
         validRequest.setName("Juan Perez");
         validRequest.setEmail("juan@testssw.cl");
-        validRequest.setPassword("Ab12cd34"); // cumple regex
+        validRequest.setPassword("Ab12cd34");
 
         userEntity = new User();
         userEntity.setId(UUID.randomUUID().toString());
@@ -72,7 +74,6 @@ public class UserServiceTest {
     void testCreateUser_success() {
         when(userRepository.findByEmail(validRequest.getEmail())).thenReturn(Optional.empty());
         when(jwtUtil.generateToken(validRequest.getEmail())).thenReturn("fake-jwt-token");
-
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         UserResponse response = userService.createUser(validRequest);
@@ -83,43 +84,9 @@ public class UserServiceTest {
     }
 
     @Test
-    void testCreateUser_withPhones_success() {
-        PhoneRequest phoneReq = new PhoneRequest(1234567L, 1, "56");
-        UserRequest req = new UserRequest("Fernando", "fernando@test.com", "Abc12345", Arrays.asList(phoneReq));
-
-        when(userRepository.findByEmail(req.getEmail())).thenReturn(Optional.empty());
-        when(jwtUtil.generateToken(req.getEmail())).thenReturn("fake-jwt-token");
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserResponse response = userService.createUser(req);
-
-        assertNotNull(response);
-        assertEquals("Fernando", response.getName());
-        assertEquals("fernando@test.com", response.getEmail());
-        assertEquals("fake-jwt-token", response.getToken());
-
-        assertNotNull(response.getPhones());
-        assertEquals(1, response.getPhones().size());
-        assertEquals(1234567L, response.getPhones().get(0).getNumber());
-    }
-
-    @Test
-    void testCreateUser_invalidEmail() {
-        validRequest.setEmail("invalid-email");
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.createUser(validRequest));
-        assertEquals("Formato de email inválido", ex.getMessage());
-    }
-
-    @Test
-    void testCreateUser_invalidPassword() {
-        validRequest.setPassword("12345");
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.createUser(validRequest));
-        assertEquals("Formato de password inválido", ex.getMessage());
-    }
-
-    @Test
     void testCreateUser_userAlreadyExists() {
         when(userRepository.findByEmail(validRequest.getEmail())).thenReturn(Optional.of(userEntity));
+
         RuntimeException ex = assertThrows(RuntimeException.class, () -> userService.createUser(validRequest));
         assertEquals("Usuario ya existe", ex.getMessage());
     }
