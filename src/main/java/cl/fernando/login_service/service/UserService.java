@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import cl.fernando.login_service.dto.PhoneResponse;
 import cl.fernando.login_service.dto.UserRequest;
 import cl.fernando.login_service.dto.UserResponse;
 import cl.fernando.login_service.entity.Phone;
@@ -88,7 +89,7 @@ public class UserService {
         if (updated.getPhones() != null) {
             response.setPhones(
                 updated.getPhones().stream()
-                    .map(p -> new cl.fernando.login_service.dto.PhoneResponse(
+                    .map(p -> new PhoneResponse(
                         p.getNumber(), p.getCitycode(), p.getCountrycode()))
                     .collect(Collectors.toList())
             );
