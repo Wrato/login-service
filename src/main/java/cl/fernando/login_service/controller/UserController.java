@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cl.fernando.login_service.dto.UserRequest;
 import cl.fernando.login_service.dto.UserResponse;
-import cl.fernando.login_service.service.UserService;
+import cl.fernando.login_service.service.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
-	private final UserService userService;
-	public UserController(UserService userService) {
+	private final UserServiceImpl userService;
+	public UserController(UserServiceImpl userService) {
 		this.userService = userService;
 	}
 	

@@ -26,7 +26,7 @@ import cl.fernando.login_service.dto.UserRequest;
 import cl.fernando.login_service.dto.UserResponse;
 import cl.fernando.login_service.entity.User;
 import cl.fernando.login_service.repository.UserRepository;
-import cl.fernando.login_service.service.UserService;
+import cl.fernando.login_service.service.UserServiceImpl;
 import cl.fernando.login_service.util.JwtUtil;
 
 @SpringBootTest
@@ -42,7 +42,7 @@ public class UserServiceTest {
     private ModelMapper modelMapper;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private UserRequest validRequest;
     private User userEntity;
@@ -52,7 +52,7 @@ public class UserServiceTest {
         MockitoAnnotations.openMocks(this);
 
         modelMapper = new ModelMapper();
-        userService = new UserService(userRepository, jwtUtil, modelMapper);
+        userService = new UserServiceImpl(userRepository, jwtUtil, modelMapper);
 
         validRequest = new UserRequest();
         validRequest.setName("Juan Perez");
